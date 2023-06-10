@@ -1,0 +1,17 @@
+{% extends 'portal/mainLayaut.html' %}
+
+
+{% block content %}
+    <main class="">
+        Datasets add
+
+
+        <form action="{% url 'dataset_add' %}" method="post">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" value="Submit">
+        </form>
+
+    </main>
+{% endblock content %}
+

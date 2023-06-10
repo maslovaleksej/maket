@@ -1,0 +1,17 @@
+{% extends 'portal/mainLayaut.html' %}
+
+{% block content %}
+    <a class="nav-link" href="{% url 'dataset_add' %}">Add</a>
+    <main class="">
+        Datasets
+        {% for dataset in datasets %}
+            <ul>
+                <li>
+                    {{ dataset }}
+                    {# <a href="{% url 'experiment_detail' experiment.pk %}">{{ experiment.shortName }}</a>#}
+                </li>
+            </ul>
+        {% endfor %}
+    </main>
+{% endblock content %}
+

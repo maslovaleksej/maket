@@ -1,0 +1,30 @@
+{% load static %}
+
+
+<!doctype html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+{#    <meta http-equiv="Refresh" content="2" />#}
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="GUESTSCAN">
+    <link rel="stylesheet" href="{% static 'portal/index.css' %}">
+
+    <title>GUESTSCAN</title>
+</head>
+
+<body>
+
+    <header class="">{% include "portal/parts/header.html" %}</header>
+    <nav class="">{% include "portal/parts/menu.html" %}</nav>
+
+    <div class="main">
+        {% block content %}
+        {% endblock content %}
+    </div>
+
+    <footer class="">{% include "portal/parts/footer.html" %}</footer>
+
+</body>
+</html>
