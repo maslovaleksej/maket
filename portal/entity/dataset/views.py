@@ -1,12 +1,15 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django import forms
+
+from chain import dataset_util, const
+from chain.disk_util import get_datasets_path
 from portal.entity.dataset.orm import Dataset
 
 
 class DSForm(forms.Form):
     shortName = forms.CharField()
-    dir_path = forms.CharField()
+    dir_name = forms.CharField()
 
 
 @login_required
@@ -27,11 +30,15 @@ def dataset_add(request):
         ds = DSForm(request.POST)
         if ds.is_valid():
             shortName = ds.cleaned_data['shortName']
-            dir_path = ds.cleaned_data['dir_path']
+            dir_name = ds.cleaned_data['dir_name']
 
-            dataset = Dataset(shortName=shortName, dir_path=dir_path)
-            dataset.class_nums = 10
-            dataset.size = 2000
+            dir_path = get_datasets_path(dir_name)
+
+            dg = dataset_util.ImageGenerator(
+                dir_path=dir_path
+            )
+
+            dataset = Dataset(shortName=shortName, dir_name=dir_name, class_nums=dg.class_nums, size=dg.total_size)
             dataset.save()
 
             return redirect(dataset_list)
