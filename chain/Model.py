@@ -1,0 +1,241 @@
+import tensorflow as tf
+import tensorflow_hub as hub
+import numpy as np
+import disk_util
+import dataset_util
+import const
+
+from art.estimators.classification import KerasClassifier, TensorFlowV2Classifier
+from art.attacks.evasion import Wasserstein, FastGradientMethod, CarliniLInfMethod, BrendelBethgeAttack, \
+    BasicIterativeMethod, DeepFool
+from sklearn.metrics import accuracy_score
+
+
+class Model:
+    def __init__(
+            self,
+            type,
+            file_name,
+            model_name,
+            input_size_x,
+            input_size_y,
+            input_size_ch,
+            min,
+            max,
+            build_shape,
+            arguments,
+    ):
+        self.eps = None
+        self.dataset_name = None
+        self.history = None
+        self.model = None
+        self.model_type = type
+        self.file_name = file_name
+        self.model_name = model_name
+        self.input_size_x = input_size_x
+        self.input_size_y = input_size_y
+        self.input_size_ch = input_size_ch
+        self.min = min
+        self.max = max
+        self.build_shape = build_shape
+        self.arguments = arguments
+        self.image_shape = (input_size_x, input_size_y, input_size_ch)
+
+    def train(self,
+              dataset_name,
+              batch_size,
+              epoch,
+              split,
+              device,
+              ):
+        model_src_path = disk_util.get_src_models_path(self.file_name)
+        self.dataset_name = dataset_name
+
+        train_ds = dataset_util.Dataset(
+            subset="training",
+            dataset_name=dataset_name,
+            split=split,
+            size_x=self.input_size_x,
+            size_y=self.input_size_y,
+            batch_size=batch_size,
+            min=self.min,
+            max=self.max,
+        )
+
+        val_ds = dataset_util.Dataset(
+            subset="validation",
+            dataset_name=dataset_name,
+            split=split,
+            size_x=self.input_size_x,
+            size_y=self.input_size_y,
+            batch_size=batch_size,
+            min=self.min,
+            max=self.max,
+        )
+
+        with tf.device(device):
+            self.model = tf.keras.Sequential([])
+            self.model.add(hub.KerasLayer(model_src_path, trainable=True, arguments=self.arguments))
+
+            self.model.add(tf.keras.layers.Dense(train_ds.class_nums * 4, activation='relu'))
+            self.model.add(tf.keras.layers.Dense(train_ds.class_nums * 4, activation='relu'))
+
+            # self.model.add(
+            #     tf.keras.layers.Dense(self.train_ds.class_nums, activation='relu', kernel_regularizer=tf.keras.regularizers.l2(0.0001)))
+
+            self.model.add(
+                tf.keras.layers.Dense(train_ds.class_nums)
+            )
+
+            self.model.build([None, self.input_size_x, self.input_size_y, self.input_size_ch])
+
+            self.model.compile(
+                optimizer=tf.keras.optimizers.SGD(),
+                loss=tf.keras.losses.CategoricalCrossentropy(from_logits=True),
+                metrics=['accuracy']
+            )
+
+            steps_per_epoch = train_ds.size // batch_size
+            validation_steps = val_ds.size // batch_size
+
+            self.model.summary()
+
+            early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=2)
+
+            self.history = self.model.fit(
+                train_ds.ds,
+                epochs=epoch,
+                steps_per_epoch=steps_per_epoch,
+                validation_data=val_ds.ds,
+                validation_steps=validation_steps,
+                callbacks=[early_stopping_callback]
+            ).history
+
+            disk_util.save_model(
+                dataset_name=dataset_name,
+                model_name=self.model_name,
+                model=self.model
+            )
+            disk_util.save_history(
+                dataset_name=dataset_name,
+                model_name=self.model_name,
+                history=self.history
+            )
+        pass
+
+    def load(self,
+             target_dataset_name,
+             device,
+             ):
+        with tf.device(device):
+            model_path = disk_util.get_trained_model_save_path(dataset_name=target_dataset_name,
+                                                               model_name=self.model_name)
+            self.model = tf.keras.models.load_model(model_path, compile=True)
+            self.model.compile()
+            self.dataset_name = target_dataset_name
+            self.model.summary()
+
+    def attack(self,
+               attack_name,
+               batch_size,
+               batch_nums,
+               device,
+               save_images
+               ):
+        with tf.device(device):
+
+            generator = dataset_util.Generator(
+                dir_path=const.DATA + "/Classification/Datasets/Flowers/",
+                size_x=self.input_size_x,
+                size_y=self.input_size_y,
+                batch_size=10,
+                min=self.min,
+                max=self.max
+            )
+
+            pred_acc_arr = {"x": [], "y": [], "y_adv": []}
+
+            classifier = TensorFlowV2Classifier(
+                model=self.model,
+                clip_values=(0, 1),
+                nb_classes=generator.class_nums,
+                input_shape=self.image_shape,
+                loss_object=tf.losses.SparseCategoricalCrossentropy(from_logits=True)
+            )
+
+            self.eps = [0, 0.1, 0.6, 0.9]
+
+            for eps in self.eps:
+                print("eps=", eps)
+                attack = FastGradientMethod(estimator=classifier, eps=eps)
+
+                generator = dataset_util.Generator(
+                    dir_path=const.DATA + "/Classification/Datasets/Flowers/",
+                    size_x=self.input_size_x,
+                    size_y=self.input_size_y,
+                    batch_size=10,
+                    min=self.min,
+                    max=self.max
+                )
+
+                true_labels_arr = []
+                pred_labels_arr = []
+                pred_adv_labels_arr = []
+
+                for i in range(batch_nums):
+                    print("batch ", i)
+                    gen = generator.get_batch_generator(batch_size=batch_size)
+                    images, labels = next(gen)
+                    adv_images = attack.generate(images)
+
+                    pred_labels = self.model.predict(images)
+                    pred_adv_labels = self.model.predict(adv_images)
+
+                    disk_util.save_adv_image(
+                        attack_name=attack_name,
+                        dataset_name=self.dataset_name,
+                        model_name=self.model_name,
+                        eps=str(int(eps * 1000)),
+                        batch_count=i,
+                        labels=labels,
+                        pred_labels=pred_labels,
+                        pred_adv_labels=pred_adv_labels,
+                        adv_images=adv_images
+                    )
+
+                    for label in labels:
+                        true_labels_arr.append(label)
+
+                    for label_ in pred_labels:
+                        label = np.argmax(label_)
+                        pred_labels_arr.append(label)
+
+                    for label_ in pred_adv_labels:
+                        label = np.argmax(label_)
+                        pred_adv_labels_arr.append(label)
+
+                    print(true_labels_arr)
+                    print(pred_labels_arr)
+                    print(pred_adv_labels_arr)
+
+                pred_acc = accuracy_score(true_labels_arr, pred_labels_arr)
+                pred_adv_acc = accuracy_score(true_labels_arr, pred_adv_labels_arr)
+
+                print(f"for eps={eps} accuracy={pred_acc}")
+                print(f"for eps={eps} adv_accuracy={pred_adv_acc}")
+                print("\n")
+
+                pred_acc_arr["x"].append(eps)
+                pred_acc_arr["y"].append(pred_acc)
+                pred_acc_arr["y_adv"].append(pred_adv_acc)
+
+            print("pred_acc_arr", pred_acc_arr)
+
+            disk_util.save_pred(
+                attack_name=attack_name,
+                dataset_name=self.dataset_name,
+                model_name=self.model_name,
+                pred_acc_arr=pred_acc_arr
+            )
+
+            print("\n\n")

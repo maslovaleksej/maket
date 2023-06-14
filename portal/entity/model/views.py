@@ -1,20 +1,22 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django import forms
-
-from chain import dataset_util
-from chain.disk_util import get_datasets_path
-from portal.entity.dataset.orm import Dataset
-import os
-
 from portal.entity.model.orm import INS
+import tensorflow as tf
 
 
 class MForm(forms.Form):
-    type = forms.Select()
+    type = forms.IntegerField(label="type")
     shortName = forms.CharField(label="Название датасета")
     dir_name = forms.CharField(label="Название корневой папки на диске")
     comments = forms.CharField(label="Описание модели")
+    input_size_x = forms.IntegerField()
+    input_size_y = forms.IntegerField()
+    input_size_ch = forms.IntegerField()
+    min = forms.IntegerField()
+    max = forms.IntegerField()
+    build_shape = forms.BooleanField()
+    arguments = forms.JSONField()
 
 
 class MForm_resume(forms.Form):
@@ -23,7 +25,7 @@ class MForm_resume(forms.Form):
     comments = forms.CharField()
 
 
-# ----------------------------------------------------ФАЫ
+# ----------------------------------------------------
 
 @login_required
 def models_list(request):
@@ -42,57 +44,40 @@ def model_detail(request, id):
 
 
 def model_add(request):
-    if request.method == "POST":
-        # form check before add in database
-        model_form = MForm(request.POST)
-        if model_form.is_valid():
-            type = model_form.cleaned_data['type']
-            shortName = model_form.cleaned_data['shortName']
-            dir_name = model_form.cleaned_data['dir_name']
-            comments = model_form.cleaned_data['comments']
-            #
-            #         dir_path = get_datasets_path(dir_name)
-            #
-            #         dg = dataset_util.ImageGenerator(
-            #             dir_path=dir_path
-            #         )
-            #
-            error_msg = None
-            #         if dg.total_size == 0 or dg.class_nums == 0: error_msg = "Количество изображений = 0"
-            #
-            #         dataset = Dataset.objects.filter(shortName=shortName).first()
-            #         if dataset: error_msg = "Имя датасета присутствует в дазе данных "
-            #
-            #         dataset = Dataset.objects.filter(dir_name=dir_name).first()
-            #         if dataset: error_msg += " Данная директория уже подключена к базе данных"
-            #
-            context = {"shortName": shortName,
-                       "dir_name": dir_name,
-                       "comments": comments,
-
-                       "error_msg": error_msg
-                       }
-            return render(request, 'portal/pages/model/add_resume.html', context)
-    #
-    #     # add in database
-    #     ds_full = DSForm_full(request.POST)
-    #     if ds_full.is_valid():
-    #         dataset_orm = Dataset(
-    #             shortName=ds_full.cleaned_data['shortName'],
-    #             dir_name=ds_full.cleaned_data['dirName'],
-    #             class_nums=ds_full.cleaned_data['classNums'],
-    #             size=ds_full.cleaned_data['size'],
-    #         )
-    #         dataset_orm.save()
-    #         return redirect(dataset_list)
-    #
-    if request.method == "GET":
-        m = MForm()
-        context = {"form": m}
-        return render(request, 'portal/pages/model/add.html', context)
+    pass
 
 
-    return render(request, 'portal/pages/model/add.html')
+def model_add_resume(request):
+    # form check before add in database
+    model_form = MForm(request.POST)
+    if model_form.is_valid():
+        cleaned_model_form = model_form.cleaned_data
+
+        model_path = "/Users/aleksejmaslov/Data/Classification/Models/Src/efficientnet_b0_feature-vector_1"
+        ins = tf.keras.models.load_model(model_path, compile=True)
+        # ins.compile()
+        summary = ins.summary()
+        # print(summary)
+        pass
+
+        cleaned_model_form['summary'] = summary[-100:]
+
+        error_msg = None
+
+        context = {
+            "form": cleaned_model_form,
+            "error_msg": error_msg
+        }
+        return render(request, 'portal/pages/model/add_resume.html', context)
+
+
+def model_add_form(request):
+    m = MForm()
+    context = {"form": m}
+    return render(request, 'portal/pages/model/add_form.html', context)
+
+
+# return render(request, 'portal/pages/model/add.html')
 
 
 def model_del(request, id):
