@@ -6,6 +6,7 @@ class Dataset(models.Model):
     dir_name = models.CharField(max_length=250, verbose_name='Относительный путь', unique=True, null=False, blank=False)
     class_nums = models.IntegerField(verbose_name="Количество классов", unique=False, null=False, blank=False)
     size = models.IntegerField(verbose_name="Количество образцов", unique=False, null=False, blank=False)
+    comments = models.TextField(verbose_name="Описание")
 
     def __str__(self): return self.shortName
 

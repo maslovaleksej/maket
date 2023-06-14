@@ -1,17 +1,37 @@
 {% extends 'portal/mainLayaut.html' %}
 
 {% block content %}
-    <a class="nav-link" href="{% url 'dataset_add' %}">Add</a>
+
+    <div class="d-flex justify-content-between align-items-center pb-3">
+        <h3>Датасеты</h3>
+        <a class="btn btn-success text-decoration-none" href="{% url 'dataset_add' %}"
+           role="button">Добавить</a>
+    </div>
+
+
     <main class="">
-        Datasets
-        {% for dataset in datasets %}
-            <ul>
-                <li>
-                    {{ dataset }}
-                    {# <a href="{% url 'experiment_detail' experiment.pk %}">{{ experiment.shortName }}</a>#}
+        <ol class="list-group list-group-numbered w-75">
+
+            {% for dataset in datasets %}
+
+                <li class="list-group-item d-flex justify-content-between align-items-start">
+                    <div class="ms-2 me-auto">
+                        <div class="fw-bold">
+                            <a href="{% url 'dataset_detail' dataset.pk %}">{{ dataset.shortName }}</a></div>
+                        {{ dataset.comments }} (изображений: {{ dataset.size }}, классов: {{ dataset.class_nums }})
+                    </div>
+                    <span class="badge bg-primary rounded-pill">{{ dataset.class_nums }}</span>
+
+                    <span class="badge bg-info rounded-pill ms-1">{{ dataset.size }}</span>
                 </li>
-            </ul>
-        {% endfor %}
+
+            {% endfor %}
+
+        </ol>
     </main>
+
+
 {% endblock content %}
+
+
 

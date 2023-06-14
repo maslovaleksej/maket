@@ -23,69 +23,74 @@ class ImageGenerator(tf.keras.utils.Sequence):
         self.min = min
         self.max = max
 
+        self.class_names = ""
+        self.class_nums = 0
+        self.total_size = 0
+
 
         class_names = []
         catalog = []
         size = 0
 
-        for class_name in os.listdir(dir_path):
-            path = os.path.join(dir_path, class_name)
+        if os.path.isdir(dir_path):
+            for class_name in os.listdir(dir_path):
+                path = os.path.join(dir_path, class_name)
 
-            if os.path.isdir(path):
-                class_names.append(class_name)
-                files = os.listdir(path)
-                size += len(files)
-                files = [os.path.join(dir_path, class_name, file) for file in files]
-                catalog.append(files)
+                if os.path.isdir(path):
+                    class_names.append(class_name)
+                    files = os.listdir(path)
+                    size += len(files)
+                    files = [os.path.join(dir_path, class_name, file) for file in files]
+                    catalog.append(files)
 
-        self.class_names = class_names
-        self.class_nums = len(class_names)
-        self.catalog = catalog
-        self.total_size = size
+            self.class_names = class_names
+            self.class_nums = len(class_names)
+            self.catalog = catalog
+            self.total_size = size
 
-        # получаем массив размеров массивов каждого класса
-        len_catalog_arrays = []
-        for i in range(len(self.catalog)):
-            len_catalog_arrays.append( len(self.catalog[i]) )
+            # получаем массив размеров массивов каждого класса
+            len_catalog_arrays = []
+            for i in range(len(self.catalog)):
+                len_catalog_arrays.append( len(self.catalog[i]) )
 
-        # инициация процедуры
-        class_num = 0
-        class_step = 0
-        count = 0
-        image_vector = []
-        label_vector = []
+            # инициация процедуры
+            class_num = 0
+            class_step = 0
+            count = 0
+            image_vector = []
+            label_vector = []
 
-        # перебор каждого массива класса и выдергивание последовательно изображений каждого класса
-        while count < self.total_size:
-            if len_catalog_arrays[class_num] > class_step:
-                image_vector.append( self.catalog[class_num][class_step] )
-                label_vector.append( class_num )
-                count += 1
+            # перебор каждого массива класса и выдергивание последовательно изображений каждого класса
+            while count < self.total_size:
+                if len_catalog_arrays[class_num] > class_step:
+                    image_vector.append( self.catalog[class_num][class_step] )
+                    label_vector.append( class_num )
+                    count += 1
 
-            class_num += 1
+                class_num += 1
 
-            if class_num >= self.class_nums:
-                class_num = 0
-                class_step += 1
+                if class_num >= self.class_nums:
+                    class_num = 0
+                    class_step += 1
 
 
-        train_size = int(self.total_size * (1 - val_split))
+            train_size = int(self.total_size * (1 - val_split))
 
-        # на случай если не указано деление
-        self.image_vector = image_vector
-        self.label_vector = label_vector
+            # на случай если не указано деление
+            self.image_vector = image_vector
+            self.label_vector = label_vector
 
-        # указано деление
-        if type=="train":
-            self.image_vector = image_vector[:train_size]
-            self.label_vector = label_vector[:train_size]
+            # указано деление
+            if type=="train":
+                self.image_vector = image_vector[:train_size]
+                self.label_vector = label_vector[:train_size]
 
-        if type=="val":
-            self.image_vector = image_vector[train_size:]
-            self.label_vector = label_vector[train_size:]
+            if type=="val":
+                self.image_vector = image_vector[train_size:]
+                self.label_vector = label_vector[train_size:]
 
-        # размер выборки в батчах
-        self.batch_nums = len(self.image_vector) // self.batch_size
+            # размер выборки в батчах
+            self.batch_nums = len(self.image_vector) // self.batch_size
 
 
 

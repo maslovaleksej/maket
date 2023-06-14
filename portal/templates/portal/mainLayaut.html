@@ -3,6 +3,7 @@
 <!doctype html>
 <html lang="ru">
 
+
 <head>
     <meta charset="utf-8">
 {#    <meta http-equiv="Refresh" content="2" />#}
@@ -10,12 +11,11 @@
     <meta name="description" content="MAKET">
     <link rel="stylesheet" href="{% static 'portal/index.css' %}">
     <title>MAKET</title>
+    <link href="{% static 'portal/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
 </head>
 
 <body>
-
     <header class="">{% include "portal/parts/header.html" %}</header>
-    <nav class="">{% include "portal/parts/menu.html" %}</nav>
 
     <div class="main">
         {% block content %}
@@ -23,6 +23,10 @@
     </div>
 
     <footer class="">{% include "portal/parts/footer.html" %}</footer>
+
+
+    <script type="text/javascript" src="{% static 'portal/func.js' %}"></script>
+    <script type="text/javascript" src="{% static 'portal/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 
 </body>
 </html>
