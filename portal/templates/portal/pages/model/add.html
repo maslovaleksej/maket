@@ -1,0 +1,89 @@
+{% extends 'portal/mainLayaut.html' %}
+
+
+{% block content %}
+    <main class="">
+        <div class="d-flex justify-content-between align-items-center pb-3">
+            <h3>Добавление модели</h3>
+        </div>
+
+
+        <form action="{% url 'model_add' %}" method="post" class="form">
+            {% csrf_token %}
+
+            <div class="mb-4">
+                <label class="form-label">Тип выхода модели</label>
+
+                <select name="type" class="form-select">
+                    <option selected value="0">Вектор признаков</option>
+                    <option value="1">Классификатор</option>
+                </select>
+            </div>
+
+
+            <div class="mb-3">
+                <label class="form-label">Название</label>
+                <input type="text" class="form-control" name="shortName">
+                <div class="form-text">Будет использовано для идентификации в интерфейсе пользователя</div>
+            </div>
+
+            <br/>
+
+            <div class="mb-3">
+                <label class="form-label">Название папки с моделью в файловой системе</label>
+                <input type="text" class="form-control" name="dir_name">
+                <div class="form-text">Данная папка должна распологаться в каталоге исходных моделей</div>
+            </div>
+
+            <br/>
+
+            <div class="mb-3">
+                <label class="form-label">Описание</label>
+                <input type="text" class="form-control" name="comments">
+                <div class="form-text">Описание модели</div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Размер принимаемого изображения по X</label>
+                <input type="number" class="form-control" name="input_size_x">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Размер принимаемого изображения по Y</label>
+                <input type="number" class="form-control" name="input_size_y">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Количество каналов изображения</label>
+                <input type="number" class="form-control" name="input_size_ch">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Минимальное значение в канале цвета</label>
+                <input type="number" class="form-control" name="min">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Максимальное значение в канале цвета</label>
+                <input type="number" class="form-control" name="max">
+            </div>
+
+
+            <div class="mb-3 form-check">
+                <input type="checkbox" checked class="form-check-input" name="build_shape">
+                <label class="form-check-label">Флаг "Build shape"</label>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Аргументы в формате JSON</label>
+                <input type="text" class="form-control" name="arguments">
+            </div>
+
+
+            <input type="submit" class="btn btn-primary" value="Далее">
+        </form>
+
+
+    </main>
+{% endblock content %}
+

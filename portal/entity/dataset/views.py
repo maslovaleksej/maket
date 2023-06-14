@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django import forms
 
-from chain import dataset_util, const
+from chain import dataset_util
 from chain.disk_util import get_datasets_path
 from portal.entity.dataset.orm import Dataset
 import os
@@ -11,7 +11,7 @@ import os
 class DSForm(forms.Form):
     shortName = forms.CharField(label="Название датасета")
     dir_name = forms.CharField(label="Название корневой папки на диске")
-    comments = forms.CharField(label="Название корневой папки на диске")
+    comments = forms.CharField(label="Комментарии")
 
 
 class DSForm_full(forms.Form):
@@ -33,14 +33,6 @@ def dataset_list(request):
 
 def dataset_detail(request, id):
     dataset = Dataset.objects.filter(pk=id).first()
-    context = {
-        'pk': dataset.pk,
-        'shortName': dataset.shortName,
-        'dir_name': dataset.dir_name,
-        "comments": dataset.comments,
-        'size': dataset.size,
-        'class_nums': dataset.class_nums
-    }
 
     dir_path = get_datasets_path(dataset.dir_name)
     demo_set = []
@@ -51,7 +43,7 @@ def dataset_detail(request, id):
 
             if os.path.isdir(path):
                 files = os.listdir(path)
-                demo_set.append([class_name, files[:8]])
+                demo_set.append([class_name, files[:10]])
 
     context = {
         'pk': dataset.pk,

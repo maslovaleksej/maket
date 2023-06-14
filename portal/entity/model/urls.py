@@ -1,7 +1,11 @@
 from django.urls import path
-from portal.entity.model.views import models, models_add
+
+from portal.entity.model.views import *
+
 
 urlpatterns = [
-    path('', models, name='models'),
-    path('add/', models_add, name='model_add'),
+    path('', models_list, name='models_list'),
+    path('detail/<int:id>', model_detail, name='model_detail'),
+    path('add', model_add, name='model_add'),
+    path('del/<int:id>', model_del, name='model_del'),
 ]

@@ -6,7 +6,6 @@ urlpatterns = [
 
     path('',   include('portal.entity.dataset.urls')),
     path('datasets/',   include('portal.entity.dataset.urls')),
-
     path('models/',     include('portal.entity.model.urls')),
 
 

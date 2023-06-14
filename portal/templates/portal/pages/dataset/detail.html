@@ -13,35 +13,33 @@
 
             <div class="mb-3">
                 <label class="form-label">Название</label>
-                <input value={{ shortName }} type="text" class="form-control bg-dark-subtle" name="shortName"
-                       aria-describedby="emailHelp" readonly>
+                <input value="{{ shortName }}" type="text" class="form-control bg-dark-subtle" name="shortName"
+                       readonly>
                 <div class="form-text">Будет использовано для идентификации в интерфейсе пользователя</div>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Название папки с датасетом в файловой системе</label>
-                <input value={{ dir_name }} type="text" class="form-control bg-dark-subtle" name="dirName"
-                       aria-describedby="emailHelp"
+                <input value="{{ dir_name }}" type="text" class="form-control bg-dark-subtle" name="dirName"
                        readonly>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Комментарии</label>
-                <input value={{ comments }} type="text" class="form-control bg-dark-subtle" name="comments"
-                       aria-describedby="emailHelp" readonly>
+                <input value="{{ comments }}" type="text" class="form-control bg-dark-subtle" name="comments"
+                       readonly>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Количество изображений</label>
-                <input value={{ size }} type="text" class="form-control bg-dark-subtle" name="size"
-                       aria-describedby="emailHelp"
+                <input value="{{ size }}" type="text" class="form-control bg-dark-subtle" name="size"
                        readonly>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Количество классов</label>
-                <input value={{ class_nums }} type="text" class="form-control bg-dark-subtle" name="classNums"
-                       aria-describedby="emailHelp" readonly>
+                <input value="{{ class_nums }}" type="text" class="form-control bg-dark-subtle" name="classNums"
+                       readonly>
             </div>
         </form>
 
@@ -61,6 +59,10 @@
         {% endfor %}
 
     </main>
+
+
+    <br/>
+    <br/>
 
     <a href="{% url 'dataset_del' pk %}" class="btn btn-danger" role="button" aria-disabled="true">Удалить датасет</a>
 

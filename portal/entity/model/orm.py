@@ -2,8 +2,17 @@ from django.db import models
 
 
 class INS(models.Model):
-    shortName = models.CharField(max_length=50, verbose_name='Короткое название', unique=True, null=False, blank=False)
-    dir_name = models.CharField(max_length=250, verbose_name='Имя папки', unique=True, null=False, blank=False)
+    type = models.IntegerField(verbose_name='Вектор признаков (0), классификатор(1)')
+    dir_name = models.CharField(max_length=100, verbose_name='Имя файла', unique=True, null=False, blank=False)
+    shortName = models.CharField(max_length=100, verbose_name='Имя модели', unique=True, null=False, blank=False)
+    comments = models.TextField(verbose_name="Описание")
+    input_size_x = models.IntegerField(verbose_name='Size X')
+    input_size_y = models.IntegerField(verbose_name='Size Y')
+    input_size_ch = models.IntegerField(verbose_name='Channels num')
+    min = models.IntegerField(verbose_name='Min values input')
+    max = models.IntegerField(verbose_name='Max values input')
+    build_shape = models.BooleanField(verbose_name='Build need')
+    arguments = models.JSONField()
 
     def __str__(self): return self.shortName
 
@@ -12,19 +21,3 @@ class INS(models.Model):
         verbose_name = 'Модель'
         ordering = ['-shortName']
 
-#
-# class Experiment(models.Model):
-#     shortName = models.CharField(max_length=50, verbose_name='Короткое название', unique=True, null=False, blank=False)
-#     dir_path = models.CharField(max_length=250, verbose_name='Относительный путь', unique=True, null=False, blank=False)
-#     ins = models.ManyToManyField(INS, verbose_name="модели", related_name="модели")
-#     dataset = models.ForeignKey(Dataset, on_delete=models.RESTRICT, null=False, blank=False, related_name='Датасет', verbose_name='Датасет')
-#
-#
-#     def __str__(self): return self.shortName
-#
-#
-#     class Meta:
-#         verbose_name_plural = '03 Эксперименты'
-#         verbose_name = 'Эксперимент'
-#         ordering = ['-shortName']
-#
