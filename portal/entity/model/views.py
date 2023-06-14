@@ -6,23 +6,16 @@ import tensorflow as tf
 
 
 class MForm(forms.Form):
-    type = forms.IntegerField(label="type")
-    shortName = forms.CharField(label="Название датасета")
-    dir_name = forms.CharField(label="Название корневой папки на диске")
-    comments = forms.CharField(label="Описание модели")
+    type = forms.IntegerField()
+    shortName = forms.CharField()
+    dir_name = forms.CharField()
+    comments = forms.CharField(required=False)
     input_size_x = forms.IntegerField()
     input_size_y = forms.IntegerField()
     input_size_ch = forms.IntegerField()
     min = forms.IntegerField()
     max = forms.IntegerField()
-    build_shape = forms.BooleanField()
-    arguments = forms.JSONField()
-
-
-class MForm_resume(forms.Form):
-    shortName = forms.CharField()
-    dirName = forms.CharField()
-    comments = forms.CharField()
+    batch_norm_momentum = forms.CharField(required=False)
 
 
 # ----------------------------------------------------
@@ -48,27 +41,32 @@ def model_add(request):
 
 
 def model_add_resume(request):
-    # form check before add in database
-    model_form = MForm(request.POST)
-    if model_form.is_valid():
-        cleaned_model_form = model_form.cleaned_data
+    form = MForm(request.POST)
 
-        model_path = "/Users/aleksejmaslov/Data/Classification/Models/Src/efficientnet_b0_feature-vector_1"
-        ins = tf.keras.models.load_model(model_path, compile=True)
-        # ins.compile()
-        summary = ins.summary()
-        # print(summary)
-        pass
+    if form.is_valid():
+        dir_path_present = False
 
-        cleaned_model_form['summary'] = summary[-100:]
+        if (dir_path_present):
+            model_orm = INS(
+                form
+            )
+            model_orm.save()
+            return redirect(models_list)
+        else:
+            error = "нет такой папки"
+            context = {
+                "form": form,
+                "error_msg": error
+            }
 
-        error_msg = None
+    else:
+        error = "не заполнены некототорые поля"
 
-        context = {
-            "form": cleaned_model_form,
-            "error_msg": error_msg
-        }
-        return render(request, 'portal/pages/model/add_resume.html', context)
+    context = {
+        "form": form,
+        "error_msg": error
+    }
+    return render(request, 'portal/pages/model/add_form.html', context)
 
 
 def model_add_form(request):

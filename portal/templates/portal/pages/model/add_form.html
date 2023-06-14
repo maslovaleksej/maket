@@ -7,6 +7,12 @@
             <h3>Добавление модели</h3>
         </div>
 
+        {% if error_msg %}
+            <div class="alert alert-danger" role="alert">
+                Error: {{ error_msg }}
+            </div>
+        {% endif %}
+
 
         <form action="{% url 'model_add_resume' %}" method="post" class="form">
             {% csrf_token %}
@@ -23,7 +29,7 @@
 
             <div class="mb-3">
                 <label class="form-label">Название</label>
-                <input type="text" class="form-control" name="shortName">
+                <input type="text" value="{{ form.cleaned_data.shortName }}" class="form-control" name="shortName">
                 <div class="form-text">Будет использовано для идентификации в интерфейсе пользователя</div>
             </div>
 
@@ -31,7 +37,7 @@
 
             <div class="mb-3">
                 <label class="form-label">Название папки с моделью в файловой системе</label>
-                <input type="text" class="form-control" name="dir_name">
+                <input type="text" value="{{ form.cleaned_data.dir_name }}" class="form-control" name="dir_name">
                 <div class="form-text">Данная папка должна распологаться в каталоге исходных моделей</div>
             </div>
 
@@ -39,44 +45,39 @@
 
             <div class="mb-3">
                 <label class="form-label">Описание</label>
-                <input type="text" class="form-control" name="comments">
+                <input type="text" value="{{ form.cleaned_data.comments }}" class="form-control" name="comments">
                 <div class="form-text">Описание модели</div>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Размер принимаемого изображения по X</label>
-                <input type="number" class="form-control" name="input_size_x">
+                <input type="number" value="{{ form.cleaned_data.input_size_x }}" class="form-control" name="input_size_x">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Размер принимаемого изображения по Y</label>
-                <input type="number" class="form-control" name="input_size_y">
+                <input type="number" value="{{ form.cleaned_data.input_size_y }}" class="form-control" name="input_size_y">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Количество каналов изображения</label>
-                <input type="number" class="form-control" name="input_size_ch">
+                <input type="number" value="{{ form.cleaned_data.input_size_ch }}" class="form-control" name="input_size_ch">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Минимальное значение в канале цвета</label>
-                <input type="number" class="form-control" name="min">
+                <input type="number" value="{{ form.cleaned_data.min }}" class="form-control" name="min">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Максимальное значение в канале цвета</label>
-                <input type="number" class="form-control" name="max">
+                <input type="number" value="{{ form.cleaned_data.max }}" class="form-control" name="max">
             </div>
 
-
-            <div class="mb-3 form-check">
-                <input type="checkbox" checked class="form-check-input" name="build_shape">
-                <label class="form-check-label">Флаг "Build shape"</label>
-            </div>
 
             <div class="mb-3">
-                <label class="form-label">Аргументы в формате JSON</label>
-                <input type="text" class="form-control" name="arguments">
+                <label class="form-label">Batch_norm_momentum</label>
+                <input type="text" value="{{ form.cleaned_data.batch_norm_momentum }}" class="form-control" name="batch_norm_momentum">
             </div>
 
 

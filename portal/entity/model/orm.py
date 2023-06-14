@@ -11,8 +11,7 @@ class INS(models.Model):
     input_size_ch = models.IntegerField(verbose_name='Channels num')
     min = models.IntegerField(verbose_name='Min values input')
     max = models.IntegerField(verbose_name='Max values input')
-    build_shape = models.BooleanField(verbose_name='Build need')
-    arguments = models.JSONField()
+    batch_norm_momentum = models.FloatField()
 
     def __str__(self): return self.shortName
 
