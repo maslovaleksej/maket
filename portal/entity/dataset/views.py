@@ -84,6 +84,8 @@ def dataset_add(request):
             dataset = Dataset.objects.filter(dir_name=dir_name).first()
             if dataset: error_msg += " Данная директория уже подключена к базе данных"
 
+
+
             context = {"shortName": shortName,
                        "dir_name": dir_name,
                        "comments": comments,

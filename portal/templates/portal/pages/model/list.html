@@ -18,7 +18,7 @@
                     <div class="ms-2 me-auto">
                         <div class="fw-bold">
                             <a href="{% url 'model_detail' model.pk %}">{{ model.shortName }}</a></div>
-                        {{ model.comments }}
+                        "{{ model.dir_name }}" ({{ model.dir_size|filesizeformat }}) <br/>
                     </div>
                     <span class="badge bg-primary rounded-pill">{{ model.input_size_x }}</span>
                     <span class="badge bg-primary rounded-pill">{{ model.input_size_y }}</span>
@@ -26,6 +26,8 @@
 
                     <span class="badge bg-secondary rounded-pill ms-4">{{ model.min }}</span>
                     <span class="badge bg-secondary rounded-pill ms-1">{{ model.max }}</span>
+
+                    <span class="badge bg-success rounded-pill ms-4">{{ model.dir_size|filesizeformat }}</span>
                 </li>
 
             {% endfor %}

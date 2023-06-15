@@ -12,6 +12,7 @@ class INS(models.Model):
     min = models.IntegerField(verbose_name='Min values input')
     max = models.IntegerField(verbose_name='Max values input')
     batch_norm_momentum = models.FloatField()
+    dir_size = models.IntegerField()
 
     def __str__(self): return self.shortName
 

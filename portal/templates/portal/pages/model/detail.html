@@ -11,30 +11,81 @@
         <form action="{% url 'model_add' %}" method="post" class="form">
             {% csrf_token %}
 
-            <div class="mb-5">
+            <div class="mb-4">
+
+                <select name="type" class="form-select bg-dark-subtle" hidden="">
+                    <option {% if form.type == 0 %} selected {% endif %} value="0">Вектор признаков</option>
+                    <option {% if form.type == 1 %} selected {% endif %} value="1">Классификатор</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Тип выхода модели</label>
+                <input type="text"
+                       value="{% if form.type == 0 %}Вектор признаков {% endif %} {% if form.type == 1 %}Классификатор {% endif %}"
+                       class="form-control bg-dark-subtle" name="type_tmp" readonly>
+            </div>
+
+
+            <div class="mb-3">
                 <label class="form-label">Название</label>
-                <input value="{{ model.shortName }}" type="text" class="form-control bg-dark-subtle" name="shortName"
-                       aria-describedby="emailHelp" readonly>
+                <input type="text" value="{{ form.shortName }}" class="form-control bg-dark-subtle" name="shortName"
+                       readonly>
                 <div class="form-text">Будет использовано для идентификации в интерфейсе пользователя</div>
             </div>
 
+            <br/>
+
             <div class="mb-3">
                 <label class="form-label">Название папки с моделью в файловой системе</label>
-                <input value="{{ model.dir_name }}" type="text" class="form-control bg-dark-subtle" name="dirName"
-                       aria-describedby="emailHelp"
+                <input type="text" value="{{ form.dir_name }}" class="form-control bg-dark-subtle" name="dir_name"
                        readonly>
+                <div class="form-text">Данная папка должна распологаться в каталоге исходных моделей</div>
+            </div>
+
+            <br/>
+
+            <div class="mb-3">
+                <label class="form-label">Описание</label>
+                <input type="text" value="{{ form.comments }}" class="form-control bg-dark-subtle" name="comments"
+                       readonly>
+                <div class="form-text">Описание модели</div>
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Комментарии</label>
-                <input value="{{ model.comments }}" type="text" class="form-control bg-dark-subtle" name="comments"
-                       aria-describedby="emailHelp" readonly>
+                <label class="form-label">Размер принимаемого изображения по X</label>
+                <input type="number" value="{{ form.input_size_x }}" class="form-control bg-dark-subtle"
+                       name="input_size_x" readonly>
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Тип: вектор признаков (0), классификатор (1)</label>
-                <input value="{{ model.type }}" type="text" class="form-control bg-dark-subtle" name="type"
-                       aria-describedby="emailHelp" readonly>
+                <label class="form-label">Размер принимаемого изображения по Y</label>
+                <input type="number" value="{{ form.input_size_y }}" class="form-control bg-dark-subtle"
+                       name="input_size_y" readonly>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Количество каналов изображения</label>
+                <input type="number" value="{{ form.input_size_ch }}" class="form-control bg-dark-subtle"
+                       name="input_size_ch" readonly>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Минимальное значение в канале цвета</label>
+                <input type="number" value="{{ form.min }}" class="form-control bg-dark-subtle" name="min" readonly>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Максимальное значение в канале цвета</label>
+                <input type="number" value="{{ form.max }}" class="form-control bg-dark-subtle" name="max" readonly>
+            </div>
+
+
+            <div class="mb-3">
+                <label class="form-label">Batch_norm_momentum</label>
+                <input type="text" value="{{ form.batch_norm_momentum }}" class="form-control bg-dark-subtle"
+                       name="arguments"
+                       readonly>
             </div>
 
         </form>
@@ -46,7 +97,7 @@
     <br/>
     <br/>
 
-    <a href="{% url 'model_del' model.pk %}" class="btn btn-danger" role="button" aria-disabled="true">Удалить
+    <a href="{% url 'model_del' form.pk %}" class="btn btn-danger" role="button" aria-disabled="true">Удалить
         модель</a>
 
 {% endblock content %}
