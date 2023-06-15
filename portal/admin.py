@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from portal.entity.dataset.orm import Dataset
+from portal.entity.experiment.orm import Experiment
 from portal.entity.model.orm import INS
 
 
@@ -20,9 +21,9 @@ class INSAdmin(admin.ModelAdmin):
 admin.site.register(INS, INSAdmin)
 
 
-# class ExperimentAdmin(admin.ModelAdmin):
-#     list_display = ('shortName', )
-#     list_display_links = ('shortName', )
-#     search_fields = ('shortName', )
-#
-# admin.site.register(Experiment, ExperimentAdmin)
+class ExperimentAdmin(admin.ModelAdmin):
+    list_display = ('shortName', )
+    list_display_links = ('shortName', )
+    search_fields = ('shortName', )
+
+admin.site.register(Experiment, ExperimentAdmin)

@@ -1,0 +1,98 @@
+<div class="accordion-item">
+    <h2 class="accordion-header">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true"
+                aria-controls="panelsStayOpen-collapseOne">
+            Выбор датасета и моделей
+
+        </button>
+    </h2>
+    <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
+        <div class="accordion-body">
+            <div class="flex flex-wrap">
+
+
+                {# Выбор датасета #}
+                <div class="row justify-content-between">
+
+                    <div class="col bg-light m-2 p-2">
+                        <h5 class="mb-3">Выбор датасета</h5>
+
+                        {% for dataset in datasets %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="datasets"
+                                       id="{{ dataset.shortName }}">
+                                <label class="form-check-label">
+                                    {{ dataset.shortName }}
+                                </label>
+                            </div>
+                        {% endfor %}
+
+                    </div>
+
+
+                    {# Выбор моделей #}
+                    <div class="col bg-light m-2 p-2">
+                        <h5 class="mb-3">Выбор моделей</h5>
+                        {% for model in models %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value=""
+                                       id="{{ model.shortName }}">
+                                <label class="form-check-label" for="flexCheckDefault">
+                                    {{ model.shortName }}
+                                </label>
+                            </div>
+                        {% endfor %}
+
+                    </div>
+
+                    {# Параметры #}
+                    <div class="col bg-light m-2 p-2">
+                        <h5 class="mb-3">Параметры обучения моделей</h5>
+
+                        <div class="mb-3">
+                            <label class="form-label">Число эпох (максимально)</label>
+                            <input type="number" class="form-control" value="30" name="shortName">
+                            <div class="form-text">Рекомендуется: не менее 20 и не более 100</div>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="early_stop" checked>
+                            <label class="form-check-label" for="exampleCheck1">Использовать ранний останов - EarlyStopping('val_loss')</label>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Размер пакета (batch_size)</label>
+                            <input type="number" class="form-control" value="16" name="shortName">
+                            <div class="form-text">Рекомендуется: не менее 4 и не более 32</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Доля валидационной выборки</label>
+                            <input type="text" class="form-control" value="0.2" name="shortName">
+                            <div class="form-text">Рекомендуется: не менее 0.1 и не более 0.4</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-label">Использовать при вычислениях</div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="calc" id="gpu"
+                                       value="gpu" checked>
+                                <label class="form-check-label" for="inlineRadio1">GPU</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="calc" id="cpu"
+                                       value="cpu">
+                                <label class="form-check-label" for="inlineRadio2">CPU</label>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>

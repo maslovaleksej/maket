@@ -1,0 +1,62 @@
+{% extends 'portal/mainLayaut.html' %}
+
+
+{% block content %}
+    <main class="">
+        <div class="d-flex justify-content-between align-items-center pb-3">
+            <h3>Добавление эксперимента</h3>
+        </div>
+
+        {% if error_msg %}
+            <div class="alert alert-danger" role="alert">
+                Error: {{ error_msg }}
+            </div>
+        {% endif %}
+
+
+
+        <form action="{% url 'experiment_add_resume' %}" method="post" class="form">
+            {% csrf_token %}
+
+            <div class="accordion" id="accordionPanelsStayOpenExample">
+
+                {# Датасет и модели #}
+                {% include "portal/pages/experiment/parts/dataset_model.html" %}
+
+                {# Атаки #}
+                {% include "portal/pages/experiment/parts/attack.html" %}
+
+
+
+
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="true"
+                                aria-controls="panelsStayOpen-collapseThree">
+                            Accordion Item #3
+                        </button>
+                    </h2>
+                    <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            <strong>This is the third item's accordion body.</strong> It is hidden by default, until the
+                            collapse plugin adds the appropriate classes that we use to style each element. These
+                            classes control the overall appearance, as well as the showing and hiding via CSS
+                            transitions. You can modify any of this with custom CSS or overriding our default variables.
+                            It's also worth noting that just about any HTML can go within the
+                            <code>.accordion-body</code>, though the transition does limit overflow.
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <input type="submit" class="btn btn-primary" value="Далее">
+        </form>
+
+
+    </main>
+{% endblock content %}
+

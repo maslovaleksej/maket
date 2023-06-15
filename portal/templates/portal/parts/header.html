@@ -1,33 +1,35 @@
 {% load static %}
 
 <div class="px-3">
-    <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
-        <a href="/"
-           class="d-flex align-items-center mb-3 me-auto link-body-emphasis text-decoration-none">
-           <span class="fs-4">Макет</span>
-        </a>
+        <div class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
 
-        <ul class="nav nav-pills">
-            <li class="nav-item">
-                <a href="{% url 'dataset_list' %}"
-                   class="nav-link {% if request.path == '/datasets/' %} active {% endif %}> text-decoration-none"
-                   aria-current="page">Датасеты</a>
-            </li>
+            <a href="/"
+               class="d-flex align-items-center mb-3 me-auto link-body-emphasis text-decoration-none">
+                <span class="fs-4">Макет</span>
+            </a>
 
-            <li class="nav-item">
-                <a href="{% url 'models_list' %}"
-                   class="nav-link {% if request.path == '/models/' %} active {% endif %} text-decoration-none">Модели</a>
-            </li>
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <a href="{% url 'dataset_list' %}"
+                       class="nav-link {% if request.path == '/datasets/' %} active {% endif %}> text-decoration-none"
+                       aria-current="page">Датасеты</a>
+                </li>
 
-            <li class="nav-item">
-                <a href="#"
-                   class="nav-link {% if request.path == '/experiments/' %} active {% endif %} text-decoration-none">Эксперименты</a>
-            </li>
+                <li class="nav-item">
+                    <a href="{% url 'models_list' %}"
+                       class="nav-link {% if request.path == '/models/' %} active {% endif %} text-decoration-none">Модели</a>
+                </li>
 
-            <li class="nav-item">
-                <a href="{% url 'logout' %}?next=/" class="nav-link  text-decoration-none">Выход</a>
-            </li>
+                <li class="nav-item">
+                    <a href="{% url 'experiments_list' %}"
+                       class="nav-link {% if request.path == '/experiments/' %} active {% endif %} text-decoration-none">Эксперименты</a>
+                </li>
 
-        </ul>
-    </header>
+                <li class="nav-item">
+                    <a href="{% url 'logout' %}?next=/" class="nav-link  text-decoration-none">Выход</a>
+                </li>
+
+            </ul>
+
+        </div>
 </div>

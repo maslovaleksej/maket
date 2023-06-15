@@ -15,14 +15,18 @@
 </head>
 
 <body>
-    <header class="">{% include "portal/parts/header.html" %}</header>
+    <header class="">
+        {% include "portal/parts/header.html" %}
+    </header>
 
     <div class="main">
         {% block content %}
         {% endblock content %}
     </div>
 
-    <footer class="">{% include "portal/parts/footer.html" %}</footer>
+    <footer class="">
+        {% include "portal/parts/footer.html" %}
+    </footer>
 
 
     <script type="text/javascript" src="{% static 'portal/func.js' %}"></script>

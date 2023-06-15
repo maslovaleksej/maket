@@ -1,15 +1,14 @@
 {% extends 'portal/mainLayaut.html' %}
-
+{% load static %}
 
 {% block content %}
     <main class="">
         <div class="d-flex justify-content-between align-items-center pb-3">
-            <h3>Добавление модели. Резюме</h3>
+            <h3>Описание модели</h3>
             <input type="button" class="btn btn-secondary" value="Назад" onclick="goBack()">
         </div>
 
-
-        <form action="{% url 'model_add' %}" method="post" class="form">
+        <form action="{% url 'model_add_form' %}" method="post" class="form">
             {% csrf_token %}
 
             <div class="mb-4">
@@ -84,16 +83,22 @@
 
             <div class="mb-3">
                 <label class="form-label">Batch_norm_momentum</label>
-                <input type="text" value="{{ form.batch_norm_momentum }}" class="form-control bg-dark-subtle" name="arguments"
+                <input type="text" value="{{ form.batch_norm_momentum }}" class="form-control bg-dark-subtle"
+                       name="arguments"
                        readonly>
             </div>
 
-
-
-            <input type="submit" class="btn btn-primary" value="Далее">
         </form>
 
 
     </main>
+
+
+    <br/>
+    <br/>
+
+    <a href="{% url 'model_del' form.pk %}" class="btn btn-danger" role="button" aria-disabled="true">Удалить
+        модель</a>
+
 {% endblock content %}
 
