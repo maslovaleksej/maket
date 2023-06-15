@@ -12,27 +12,187 @@
             <div class="flex flex-wrap text-start">
                 <div class="row align-items-start">
 
-                    <div class="col bg-light m-2 p-2">
-                        <h5 class="mb-3">Basic Iterative Method (BIM)</h5>
+                    <div class="col bg-light m-2 p-2  w-auto">
+                        <div class="row mb-4">
+                            <div class="col">
+                                <h5>Basic Iterative Method (BIM)</h5>
+                            </div>
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch"
+                                           id="flexSwitchCheckDefault">
+                                    <label class="form-check-label">Использовать</label>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Сила атаки (эпсилон)</label>
-                            <input type="text" class="form-control" value="0, 0.001, 0.002, 0.003, 0.005, 0.007, 0.01, 0.02, 0.03, 0.05, 0.07, 0.1, 0.2, 0.3, 0.4, 0.5,
-                        0.6, 0.7, 0.8, 0.9" name="shortName">
+                            <label class="form-label">Сила атаки (эпсилон). Массив значений</label>
+                            <input type="text" class="form-control"
+                                   value="0, 0.001, 0.002, 0.003, 0.005, 0.007, 0.01, 0.02, 0.03, 0.05, 0.07, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9"
+                                   name="eps">
                             <div class="form-text">Рекомендуется: не менее 5 параметров для построения графика</div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Число пакетов (batch) проведения атаки</label>
-                            <input type="number" class="form-control" value="30" name="shortName">
-                            <div class="form-text">Рекомендуется: не менее 20 и не более 100</div>
+                            <input type="number" class="form-control" value="25" name="shortName">
+                            <div class="form-text">Число обрабатываемых изображений равно - число пакетов умножить на
+                                размер пакета
+                            </div>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Число обрабатываемых изображений в одном пакете</label>
-                            <input type="number" class="form-control" value="30" name="shortName">
-                            <div class="form-text">Рекомендуется: не менее 20 и не более 100</div>
+                            <label class="form-label">Размер пакета</label>
+                            <input type="number" class="form-control" value="4" name="shortName">
+                            <div class="form-text">Рекомендуется: не менее 2 и не более 64</div>
                         </div>
+
+
+                        <div class="mb-3">
+                            <div class="form-label">Использовать при вычислениях</div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="calc2" id="gpu"
+                                       value="gpu" checked>
+                                <label class="form-check-label" for="inlineRadio1">GPU</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="calc2" id="cpu"
+                                       value="cpu">
+                                <label class="form-check-label" for="inlineRadio2">CPU</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="save_attacked_img" checked>
+                            <label class="form-check-label" for="exampleCheck1">Сохранять атакованные
+                                изображения</label>
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="col bg-light m-2 p-2  w-auto">
+
+                        <div class="row mb-4">
+                            <div class="col">
+                                <h5>Projected Gradient Descent (PGD)</h5>
+                            </div>
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch"
+                                           id="flexSwitchCheckDefault">
+                                    <label class="form-check-label">Использовать</label>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label class="form-label">Сила атаки (эпсилон). Массив значений</label>
+                            <input type="text" class="form-control"
+                                   value="0, 0.001, 0.002, 0.003, 0.005, 0.007, 0.01, 0.02, 0.03, 0.05, 0.07, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9"
+                                   name="eps">
+                            <div class="form-text">Рекомендуется: не менее 5 параметров для построения графика</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Число пакетов (batch) проведения атаки</label>
+                            <input type="number" class="form-control" value="50" name="shortName">
+                            <div class="form-text">Число обрабатываемых изображений равно - число пакетов умножить на
+                                размер пакета
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Размер пакета</label>
+                            <input type="number" class="form-control" value="10" name="shortName">
+                            <div class="form-text">Рекомендуется: не менее 2 и не более 64</div>
+                        </div>
+
+
+                        <div class="mb-3">
+                            <div class="form-label">Использовать при вычислениях</div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="calc3" id="gpu"
+                                       value="gpu" checked>
+                                <label class="form-check-label" for="inlineRadio1">GPU</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="calc3" id="cpu"
+                                       value="cpu">
+                                <label class="form-check-label" for="inlineRadio2">CPU</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="save_attacked_img" checked>
+                            <label class="form-check-label" for="exampleCheck1">Сохранять атакованные
+                                изображения</label>
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="col bg-light m-2 p-2 w-auto">
+                        <div class="row mb-4">
+                            <div class="col">
+                                <h5>Fast Gradient Method (FGM)</h5>
+                            </div>
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch"
+                                           id="flexSwitchCheckDefault">
+                                    <label class="form-check-label">Использовать</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Сила атаки (эпсилон). Массив значений</label>
+                            <input type="text" class="form-control"
+                                   value="0, 0.001, 0.002, 0.003, 0.005, 0.007, 0.01, 0.02, 0.03, 0.05, 0.07, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9"
+                                   name="eps">
+                            <div class="form-text">Рекомендуется: не менее 5 параметров для построения графика</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Число пакетов (batch) проведения атаки</label>
+                            <input type="number" class="form-control" value="10" name="shortName">
+                            <div class="form-text">Число обрабатываемых изображений равно - число пакетов умножить на
+                                размер пакета
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Размер пакета</label>
+                            <input type="number" class="form-control" value="100" name="shortName">
+                            <div class="form-text">Рекомендуется: не менее 2 и не более 64</div>
+                        </div>
+
+
+                        <div class="mb-3">
+                            <div class="form-label">Использовать при вычислениях</div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="calc4" id="gpu"
+                                       value="gpu" checked>
+                                <label class="form-check-label" for="inlineRadio1">GPU</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="calc4" id="cpu"
+                                       value="cpu">
+                                <label class="form-check-label" for="inlineRadio2">CPU</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="save_attacked_img" checked>
+                            <label class="form-check-label" for="exampleCheck1">Сохранять атакованные
+                                изображения</label>
+                        </div>
+
 
                     </div>
 
