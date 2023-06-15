@@ -11,7 +11,7 @@ class INS(models.Model):
     input_size_ch = models.IntegerField(verbose_name='Channels num')
     min = models.IntegerField(verbose_name='Min values input')
     max = models.IntegerField(verbose_name='Max values input')
-    batch_norm_momentum = models.FloatField()
+    batch_norm_momentum = models.FloatField(null=True)
     dir_size = models.IntegerField()
 
     def __str__(self): return self.shortName

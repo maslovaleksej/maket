@@ -13,7 +13,7 @@ admin.site.register(Dataset, DatasetAdmin)
 
 
 class INSAdmin(admin.ModelAdmin):
-    list_display = ('shortName', )
+    list_display = ('shortName', 'type')
     list_display_links = ('shortName', )
     search_fields = ('shortName', )
 

@@ -25,7 +25,7 @@ class MForm(forms.Form):
 
 @login_required
 def models_list(request):
-    models = INS.objects.all()
+    models = INS.objects.order_by('dir_name').all()
     context = {'models': models}
     return render(request, 'portal/pages/model/list.html', context)
 
@@ -39,9 +39,6 @@ def model_detail(request, id):
     return render(request, 'portal/pages/model/detail.html', context)
 
 
-def model_add(request):
-    pass
-
 
 def model_add_resume(request):
     form = MForm(request.POST)
@@ -52,7 +49,7 @@ def model_add_resume(request):
         if model: error_msg = "Имя модели присутствует в дазе данных"
 
         model = INS.objects.filter(dir_name=form.cleaned_data['dir_name']).first()
-        if model: error_msg = "Данная директория уже подключена к базе данных"
+        if model: error_msg = "Данная модель (папка с моделью) уже подключена к базе данных"
 
 
         dir_path = get_src_models_path(form.cleaned_data['dir_name'])
@@ -61,6 +58,10 @@ def model_add_resume(request):
         dir_size = get_dir_size(dir_path)
         if dir_size == 0: error_msg = 'размер папки равен 0'
 
+        try:
+            batch_norm_momentum = float(form.cleaned_data['batch_norm_momentum'])
+        except:
+            batch_norm_momentum = None
 
         if len(error_msg) == 0:
             model_orm = INS(
@@ -73,7 +74,7 @@ def model_add_resume(request):
                 input_size_ch=form.cleaned_data['input_size_ch'],
                 min=form.cleaned_data['min'],
                 max=form.cleaned_data['max'],
-                batch_norm_momentum=0,
+                batch_norm_momentum=batch_norm_momentum,
                 dir_size=dir_size,
             )
             model_orm.save()

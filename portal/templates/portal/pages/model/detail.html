@@ -8,7 +8,7 @@
             <input type="button" class="btn btn-secondary" value="Назад" onclick="goBack()">
         </div>
 
-        <form action="{% url 'model_add' %}" method="post" class="form">
+        <form action="{% url 'model_add_form' %}" method="post" class="form">
             {% csrf_token %}
 
             <div class="mb-4">
