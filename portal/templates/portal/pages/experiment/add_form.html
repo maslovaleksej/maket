@@ -18,6 +18,11 @@
         <form action="{% url 'experiment_add_resume' %}" method="post" class="form">
             {% csrf_token %}
 
+            <div class="mb-3">
+                <label class="form-label">Название</label>
+                <input type=" text" class="form-control" value="" name="cernel">
+            </div>
+
             <div class="accordion" id="accordionPanelsStayOpenExample">
 
                 {# Датасет и модели #}

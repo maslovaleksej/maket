@@ -14,7 +14,7 @@
                 <div class="row align-items-start">
 
 
-                    <div class="col bg-light m-2 p-2  w-auto">
+                    <div class="col-2 bg-light m-2 p-2  w-auto">
 
                         <div class="row mb-4">
                             <div class="col">
@@ -30,9 +30,9 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Размер ядра</label>
-                            <input type="number" class="form-control" value="6" name="cernel">
-                            <div class="form-text">Размер ядра предобработки изображения (window_size)</div>
+                            <label class="form-label">Размеры ядра</label>
+                            <input type="text" class="form-control" value="3, 5, 7, 9" name="cernel">
+                            <div class="form-text">Размер ядра (window_size)</div>
                         </div>
 
                         <div class="mb-3 form-check">
@@ -43,7 +43,7 @@
                     </div>
 
 
-                    <div class="col bg-light m-2 p-2  w-auto">
+                    <div class="col-2 bg-light m-2 p-2  w-auto">
                         <div class="row mb-4">
                             <div class="col">
                                 <h5>FeatureSqueezing</h5>
@@ -57,6 +57,12 @@
                             </div>
                         </div>
 
+                        <div class="mb-3">
+                            <label class="form-label">Количество каналов</label>
+                            <input type="text" class="form-control" value="2, 3, 4, 5, 6" name="cernel">
+                            <div class="form-text">Bit Depth Reduction</div>
+                        </div>
+
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="save_attacked_img" checked>
                             <label class="form-check-label" for="exampleCheck1">Сохранять восстановленные
@@ -65,7 +71,7 @@
                     </div>
 
 
-                    <div class="col bg-light m-2 p-2  w-auto">
+                    <div class="col-2 bg-light m-2 p-2  w-auto">
                         <div class="row mb-4">
                             <div class="col">
                                 <h5>JpegCompression</h5>
@@ -81,7 +87,7 @@
 
                         <div class="mb-3">
                             <label class="form-label">Качество сжатия</label>
-                            <input type="number" class="form-control" value="10" name="cernel">
+                            <input type="text" class="form-control" value="5, 10, 15, 20, 30" name="cernel">
                             <div class="form-text">Качество сжатия в % (quality)</div>
                         </div>
 
@@ -92,6 +98,117 @@
                         </div>
                     </div>
 
+
+                    <div class="col-2 bg-light m-2 p-2  w-auto">
+                        <div class="row mb-4">
+                            <div class="col">
+                                <h5>DefenseGAN</h5>
+                            </div>
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch"
+                                           id="flexSwitchCheckDefault">
+                                    <label class="form-check-label">Использовать</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Число эпох обучения</label>
+                            <input type="text" class="form-control" value="10, 20, 30" name="cernel">
+                            <div class="form-text">Чем выше - тем лучше эффект</div>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="save_attacked_img" checked>
+                            <label class="form-check-label" for="exampleCheck1">Сохранять восстановленные
+                                изображения</label>
+                        </div>
+                    </div>
+
+
+                    <div class="col-2 bg-light m-2 p-2  w-auto">
+                        <div class="row mb-4">
+                            <div class="col">
+                                <h5>InverseGAN</h5>
+                            </div>
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch"
+                                           id="flexSwitchCheckDefault">
+                                    <label class="form-check-label">Использовать</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Число эпох обучения</label>
+                            <input type="text" class="form-control" value="10, 20, 30" name="cernel">
+                            <div class="form-text">Чем выше - тем лучше эффект</div>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="save_attacked_img" checked>
+                            <label class="form-check-label" for="exampleCheck1">Сохранять восстановленные
+                                изображения</label>
+                        </div>
+                    </div>
+
+
+                     <div class="col-2 bg-light m-2 p-2  w-auto">
+                        <div class="row mb-4">
+                            <div class="col">
+                                <h5>PixelDefend</h5>
+                            </div>
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch"
+                                           id="flexSwitchCheckDefault">
+                                    <label class="form-check-label">Использовать</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Число эпох обучения</label>
+                            <input type="text" class="form-control" value="10, 20, 30, 40, 50" name="cernel">
+                            <div class="form-text">Чем выше - тем лучше эффект</div>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="save_attacked_img" checked>
+                            <label class="form-check-label" for="exampleCheck1">Сохранять восстановленные
+                                изображения</label>
+                        </div>
+                    </div>
+
+
+                    <div class="col-2 bg-light m-2 p-2  w-auto">
+                        <div class="row mb-4">
+                            <div class="col">
+                                <h5>GaussianAugmentation</h5>
+                            </div>
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch"
+                                           id="flexSwitchCheckDefault">
+                                    <label class="form-check-label">Использовать</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Размер ядра свертки</label>
+                            <input type=" text" class="form-control" value="3, 4, 5, 6, 7, 8, 9, 10, 11, 12" name="cernel">
+                            <div class="form-text">Рекомендуемый диапазон 3-15</div>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="save_attacked_img" checked>
+                            <label class="form-check-label" for="exampleCheck1">Сохранять восстановленные
+                                изображения</label>
+                        </div>
+                    </div>
 
                 </div>
             </div>
