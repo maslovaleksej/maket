@@ -5,7 +5,7 @@ import json
 import pickle
 import tensorflow as tf
 
-from chain.const import DATA
+from const import DATA
 
 def get_dir_size(start_path = '.'):
     total_size = 0
