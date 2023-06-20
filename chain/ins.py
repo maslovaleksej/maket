@@ -1,28 +1,13 @@
 import tensorflow as tf
 import tensorflow_hub as hub
 import numpy as np
-
-from art.preprocessing.preprocessing import Preprocessor
-from art.estimators.classification import KerasClassifier, TensorFlowV2Classifier
+from art.estimators.classification import TensorFlowV2Classifier
 from art.attacks.evasion import Wasserstein, FastGradientMethod, CarliniLInfMethod, BasicIterativeMethod, DeepFool, \
     ProjectedGradientDescent, ProjectedGradientDescentTensorFlowV2
 from art.defences.preprocessor import SpatialSmoothing, FeatureSqueezing, JpegCompression
-from keras.applications.resnet_v2 import preprocess_input
 from sklearn.metrics import accuracy_score
-
-import disk_util
 import dataset_util
-import const
-
-
-class ResNet50Preprocessor(Preprocessor):
-
-    def __call__(self, x, y=None):
-        # print ("preprocessing...")
-        return preprocess_input(x.copy()), y
-
-    def estimate_gradient(self, x, gradient):
-        return gradient[..., ::-1]
+import disk_util
 
 
 class Model_obj:
@@ -251,11 +236,12 @@ class Model_obj:
                 pred_acc_arr=pred_acc_arr
             )
 
-            print("\n\n")
+            # print("\n\n")
 
     def attack_def(
             self,
             attack_name,
+            defense_name,
             batch_size,
             batch_nums,
             device,
@@ -313,8 +299,9 @@ class Model_obj:
                     pred_labels = self.model.predict(images)
                     pred_adv_labels = self.model.predict(adv_images)
 
-                    disk_util.save_adv_image(
+                    disk_util.save_adv_def_image(
                         attack_name=attack_name,
+                        defense_name=defense_name,
                         dataset_name=self.dataset_name,
                         model_name=self.model_name,
                         eps=str(int(eps * 1000)),
@@ -353,11 +340,12 @@ class Model_obj:
 
             print("pred_acc_arr", pred_acc_arr)
 
-            disk_util.save_pred(
+            disk_util.save_pred_def(
                 attack_name=attack_name,
+                defense_name=defense_name,
                 dataset_name=self.dataset_name,
                 model_name=self.model_name,
                 pred_acc_arr=pred_acc_arr
             )
 
-            print("\n\n")
+            # print("\n\n")

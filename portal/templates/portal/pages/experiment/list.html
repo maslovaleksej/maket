@@ -12,24 +12,14 @@
     <main class="">
         <ol class="list-group list-group-numbered w-100">
 
-            {% for model in models %}
+            {% for experiment in experiments %}
 
                 <li class="list-group-item d-flex justify-content-between align-items-start">
                     <div class="ms-2 me-auto">
                         <div class="fw-bold">
-                            <a href="{% url 'model_detail' model.pk %}">{{ model.shortName }}</a></div>
-                        "{{ model.dir_name }}" ({{ model.dir_size|filesizeformat }}) <br/>
+                            <a href="{% url 'experiment_detail' experiment.pk %}">{{ experiment.shortName }}</a></div>
+                        /{{ experiment.dir_name }} ({{ experiment.comments }}) <br/>
                     </div>
-                    <span class="badge bg-success rounded-pill ms-1">{{ model.dir_size|filesizeformat }}</span>
-
-                    <span class="badge bg-primary rounded-pill ms-4">{{ model.input_size_x }}</span>
-                    <span class="badge bg-primary rounded-pill">{{ model.input_size_y }}</span>
-                    <span class="badge bg-info rounded-pill ms-1 ">{{ model.input_size_ch }}</span>
-
-                    <span class="badge bg-secondary rounded-pill ms-4">{{ model.min }}</span>
-                    <span class="badge bg-secondary rounded-pill ms-1">{{ model.max }}</span>
-
-
                 </li>
 
             {% endfor %}

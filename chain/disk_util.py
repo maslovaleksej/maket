@@ -5,7 +5,8 @@ import json
 import pickle
 import tensorflow as tf
 
-from const import DATA
+from chain.const import DATA
+
 
 def get_dir_size(start_path = '.'):
     total_size = 0
@@ -85,6 +86,40 @@ def save_adv_image(
         i+=1
 
 
+def save_adv_def_image(
+        attack_name,
+        defense_name,
+        dataset_name,
+        model_name,
+        eps,
+        batch_count,
+        labels,
+        pred_labels,
+        pred_adv_labels,
+        adv_images):
+
+    i = 0
+
+    for adv_image in adv_images:
+
+        label = labels[i]
+        pred_label = np.argmax(pred_labels[i])
+        pred_adv_label = np.argmax(pred_adv_labels[i])
+
+        dir_path = DATA + f"/Classification/Attacks/{attack_name}_{defense_name}/{model_name}/{eps}/{dataset_name}/{label}"
+        if not os.path.exists(dir_path): os.makedirs(dir_path)
+
+        plt.imsave(f'{dir_path}/img{batch_count:03d}-{i:05d}__{pred_label}-{pred_adv_label}.jpg', adv_images[i])
+
+        # img = Image.fromarray(np.asarray(np.clip(adv_image, 0, 255), dtype="uint8"), "L")
+        # img.save(f'{dir_path}/img{batch_count:03d}-{i:05d}__{pred_label}-{pred_adv_label}.jpg')
+
+        # out_img = Image.fromarray(adv_image, "RGB")
+        # out_img.save("ycc.tif")
+
+        i+=1
+
+
 def save_pred(attack_name, dataset_name, model_name, pred_acc_arr):
     dir_path = DATA + f"/Classification/Attacks/{attack_name}/{model_name}"
 
@@ -92,7 +127,16 @@ def save_pred(attack_name, dataset_name, model_name, pred_acc_arr):
 
     with open(f"{dir_path}/{dataset_name}_pred.txt", 'w') as fw:
         json.dump(pred_acc_arr, fw)
-    pass
+
+
+def save_pred_def(attack_name, dataset_name, defense_name, model_name, pred_acc_arr):
+    dir_path = DATA + f"/Classification/Attacks/{attack_name}/{model_name}"
+
+    if not os.path.exists(dir_path): os.makedirs(dir_path)
+
+    with open(f"{dir_path}/{dataset_name}_{defense_name}_pred.txt", 'w') as fw:
+        json.dump(pred_acc_arr, fw)
+
 
 
 def save_history(dataset_name, model_name, history):

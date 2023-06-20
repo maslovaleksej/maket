@@ -1,0 +1,17 @@
+{% extends 'portal/pages/experiment/experimentLayaut.html' %}
+{% load static %}
+
+{% block experiment %}
+    <main class="">
+        <div class="d-flex justify-content-between align-items-center pb-3">
+            <h3>Статус выполнения эксперимента</h3>
+        </div>
+    </main>
+
+    <br/>
+    <br/>
+    <a href="{% url 'experiment_run' form.pk %}" class="btn btn-success" role="button" aria-disabled="true">Начать расчеты</a>
+    <a href="{% url 'experiments_list' %}" class="btn btn-danger" role="button" aria-disabled="true">Остановить выполнение</a>
+
+{% endblock experiment %}
+
