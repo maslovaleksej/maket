@@ -8,13 +8,13 @@ class ImageGenerator(tf.keras.utils.Sequence):
     def __init__(
             self,
             dir_path,
-            size_x=240,
-            size_y=240,
-            batch_size=16,
-            min=0,
-            max=1,
-            type="both",
-            val_split = 0.2
+            size_x,
+            size_y,
+            batch_size,
+            min,
+            max,
+            type,
+            val_split=0.2
     ):
 
         self.size_x = size_x

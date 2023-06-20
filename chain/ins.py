@@ -1,28 +1,13 @@
 import tensorflow as tf
 import tensorflow_hub as hub
 import numpy as np
-
-from art.preprocessing.preprocessing import Preprocessor
-from art.estimators.classification import KerasClassifier, TensorFlowV2Classifier
+from art.estimators.classification import TensorFlowV2Classifier
 from art.attacks.evasion import Wasserstein, FastGradientMethod, CarliniLInfMethod, BasicIterativeMethod, DeepFool, \
     ProjectedGradientDescent, ProjectedGradientDescentTensorFlowV2
 from art.defences.preprocessor import SpatialSmoothing, FeatureSqueezing, JpegCompression
-from keras.applications.resnet_v2 import preprocess_input
 from sklearn.metrics import accuracy_score
-
-import disk_util
 import dataset_util
-import const
-
-
-class ResNet50Preprocessor(Preprocessor):
-
-    def __call__(self, x, y=None):
-        # print ("preprocessing...")
-        return preprocess_input(x.copy()), y
-
-    def estimate_gradient(self, x, gradient):
-        return gradient[..., ::-1]
+import disk_util
 
 
 class Model_obj:
@@ -91,8 +76,8 @@ class Model_obj:
             self.model = tf.keras.Sequential([])
             self.model.add(hub.KerasLayer(model_src_path, trainable=True, arguments=self.arguments))
 
-            self.model.add(tf.keras.layers.Dense(train_ds.class_nums * 4 * 4, activation='relu'))
-            self.model.add(tf.keras.layers.Dense(train_ds.class_nums * 4, activation='relu'))
+            # self.model.add(tf.keras.layers.Dense(train_ds.class_nums * 4 * 4, activation='relu'))
+            # self.model.add(tf.keras.layers.Dense(train_ds.class_nums * 4, activation='relu'))
 
             # self.model.add(
             #     tf.keras.layers.Dense(self.train_ds.class_nums, activation='relu', kernel_regularizer=tf.keras.regularizers.l2(0.0001)))
@@ -105,13 +90,15 @@ class Model_obj:
 
             self.model.compile(
                 optimizer=tf.keras.optimizers.SGD(),
+                # optimizer=tf.keras.optimizers.Adam(),
                 loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+                # loss=tf.keras.losses.CategoricalCrossentropy(from_logits=True),
                 metrics=['accuracy']
             )
 
             self.model.summary()
 
-            early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)
+            early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=2)
 
             self.history = self.model.fit(
                 train_ds,
@@ -149,6 +136,7 @@ class Model_obj:
 
     def attack(
             self,
+            experiment_name,
             attack_name,
             batch_size,
             batch_nums,
@@ -174,7 +162,7 @@ class Model_obj:
 
             classifier = TensorFlowV2Classifier(
                 model=self.model,
-                clip_values=(0, 1),
+                clip_values=(self.min, self.max),
                 nb_classes=attack_ds.class_nums,
                 input_shape=self.image_shape,
                 loss_object=tf.losses.SparseCategoricalCrossentropy(from_logits=True)
@@ -204,17 +192,19 @@ class Model_obj:
                     pred_labels = self.model.predict(images)
                     pred_adv_labels = self.model.predict(adv_images)
 
-                    disk_util.save_adv_image(
-                        attack_name=attack_name,
-                        dataset_name=self.dataset_name,
-                        model_name=self.model_name,
-                        eps=str(int(eps * 1000)),
-                        batch_count=i,
-                        labels=labels,
-                        pred_labels=pred_labels,
-                        pred_adv_labels=pred_adv_labels,
-                        adv_images=adv_images
-                    )
+                    if save_images:
+                        disk_util.save_adv_image(
+                            experiment_name=experiment_name,
+                            attack_name=attack_name,
+                            dataset_name=self.dataset_name,
+                            model_name=self.model_name,
+                            eps=str(int(eps * 1000)),
+                            batch_count=i,
+                            labels=labels,
+                            pred_labels=pred_labels,
+                            pred_adv_labels=pred_adv_labels,
+                            adv_images=adv_images
+                        )
 
                     for label in labels:
                         true_labels_arr.append(label)
@@ -245,21 +235,35 @@ class Model_obj:
             print("pred_acc_arr", pred_acc_arr)
 
             disk_util.save_pred(
+                experiment_name=experiment_name,
                 attack_name=attack_name,
                 dataset_name=self.dataset_name,
                 model_name=self.model_name,
                 pred_acc_arr=pred_acc_arr
             )
 
-            print("\n\n")
+            # print("\n\n")
 
-    def attack_def(
+
+
+
+
+
+
+
+    def attack_defense(
             self,
+            experiment_name,
             attack_name,
+            epsilon,
+
+
+            defense_name,
+            defense_eps,
+
             batch_size,
             batch_nums,
             device,
-            epsilon,
             save_images
     ):
         with tf.device(device):
@@ -278,20 +282,25 @@ class Model_obj:
 
             pred_acc_arr = {"x": [], "y": [], "y_adv": []}
 
-            jc = JpegCompression(clip_values=(0, 255), quality=10)
+            match defense_name:
+                case "JC":
+                    defense = JpegCompression(clip_values=(0, 255), quality=defense_eps)  # 10 optimum
+                case "SS":
+                    defense = SpatialSmoothing(window_size=defense_eps)  # 6 optimum
+                case "SS":
+                    defense = FeatureSqueezing(bit_depth=defense_eps)  # 8 optimum
 
             classifier = TensorFlowV2Classifier(
                 model=self.model,
-                clip_values=(0, 1),
+                clip_values=(self.min, self.max),
                 nb_classes=attack_ds.class_nums,
                 input_shape=self.image_shape,
                 loss_object=tf.losses.SparseCategoricalCrossentropy(from_logits=True),
-                preprocessing_defences=[jc],
+                preprocessing_defences=[defense],
             )
 
-            self.eps = epsilon
 
-            for eps in self.eps:
+            for eps in epsilon:
                 # print("eps=", eps)
                 match attack_name:
                     case "PGD":
@@ -313,17 +322,21 @@ class Model_obj:
                     pred_labels = self.model.predict(images)
                     pred_adv_labels = self.model.predict(adv_images)
 
-                    disk_util.save_adv_image(
-                        attack_name=attack_name,
-                        dataset_name=self.dataset_name,
-                        model_name=self.model_name,
-                        eps=str(int(eps * 1000)),
-                        batch_count=i,
-                        labels=labels,
-                        pred_labels=pred_labels,
-                        pred_adv_labels=pred_adv_labels,
-                        adv_images=adv_images
-                    )
+                    if save_images:
+                        disk_util.save_adv_def_image(
+                            experiment_name=experiment_name,
+                            attack_name=attack_name,
+                            defense_name=defense_name,
+                            defense_eps = defense_eps,
+                            dataset_name=self.dataset_name,
+                            model_name=self.model_name,
+                            eps=str(int(eps * 1000)),
+                            batch_count=i,
+                            labels=labels,
+                            pred_labels=pred_labels,
+                            pred_adv_labels=pred_adv_labels,
+                            adv_images=adv_images
+                        )
 
                     for label in labels:
                         true_labels_arr.append(label)
@@ -340,24 +353,25 @@ class Model_obj:
                     # print(pred_labels_arr)
                     # print(pred_adv_labels_arr)
 
-                pred_acc = accuracy_score(true_labels_arr, pred_labels_arr)
-                pred_adv_acc = accuracy_score(true_labels_arr, pred_adv_labels_arr)
+                    pred_acc = accuracy_score(true_labels_arr, pred_labels_arr)
+                    pred_adv_acc = accuracy_score(true_labels_arr, pred_adv_labels_arr)
 
-                # print(f"for eps={eps} accuracy={pred_acc}")
-                # print(f"for eps={eps} adv_accuracy={pred_adv_acc}")
-                # print("\n")
+                    # print(f"for eps={eps} accuracy={pred_acc}")
+                    # print(f"for eps={eps} adv_accuracy={pred_adv_acc}")
+                    # print("\n")
 
-                pred_acc_arr["x"].append(eps)
-                pred_acc_arr["y"].append(pred_acc)
-                pred_acc_arr["y_adv"].append(pred_adv_acc)
+                    pred_acc_arr["x"].append(eps)
+                    pred_acc_arr["y"].append(pred_acc)
+                    pred_acc_arr["y_adv"].append(pred_adv_acc)
 
-            print("pred_acc_arr", pred_acc_arr)
+                print("pred_acc_arr", pred_acc_arr)
 
-            disk_util.save_pred(
-                attack_name=attack_name,
-                dataset_name=self.dataset_name,
-                model_name=self.model_name,
-                pred_acc_arr=pred_acc_arr
-            )
-
-            print("\n\n")
+                disk_util.save_pred_def(
+                    experiment_name=experiment_name,
+                    attack_name=attack_name,
+                    defense_name=defense_name,
+                    defense_eps=defense_eps,
+                    dataset_name=self.dataset_name,
+                    model_name=self.model_name,
+                    pred_acc_arr=pred_acc_arr
+                )

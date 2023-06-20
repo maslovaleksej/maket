@@ -5,7 +5,8 @@ import json
 import pickle
 import tensorflow as tf
 
-from const import DATA
+from chain.const import DATA
+
 
 def get_dir_size(start_path = '.'):
     total_size = 0
@@ -30,29 +31,10 @@ def get_datasets_path(dataset_name):
 def get_trained_model_save_path(dataset_name, model_name):
     return DATA + "/Classification/Models/Trained/" + model_name + "__" + dataset_name
 
-# def get_trained_datasets_path():
-#     dir_path = const.DATA + "/Classification/Models/Trained"
-#     res_path = []
-#     for path in os.listdir(dir_path):
-#         path_to_file = os.path.join(dir_path, path)
-#         if os.path.isdir(path_to_file):
-#             if path[0] != '_':
-#                 res_path.append(path_to_file)
-#     return res_path
-
-# def get_trained_models_path(dataset_name, model_name):
-#     dir_path = const.DATA + "/Classification/Models/Trained/" + dataset_name
-#     res_path = []
-#     for path in os.listdir(dir_path):
-#         path_to_file = os.path.join(dir_path, path)
-#         if os.path.isdir(path_to_file):
-#             if path[0] != '_':
-#                 res_path.append(path_to_file)
-#     return res_path
-
 
 
 def save_adv_image(
+        experiment_name,
         attack_name,
         dataset_name,
         model_name,
@@ -71,10 +53,12 @@ def save_adv_image(
         pred_label = np.argmax(pred_labels[i])
         pred_adv_label = np.argmax(pred_adv_labels[i])
 
-        dir_path = DATA + f"/Classification/Attacks/{attack_name}/{model_name}/{eps}/{dataset_name}/{label}"
+        # dir_path = DATA + f"/Classification/Attacks/{attack_name}/{model_name}/{eps}/{dataset_name}/{label}"
+        dir_path = DATA + f"/Classification/Experiments/{experiment_name}/{dataset_name}/{model_name}/ATTACK-{attack_name}/attacked_images"
         if not os.path.exists(dir_path): os.makedirs(dir_path)
 
-        plt.imsave(f'{dir_path}/img{batch_count:03d}-{i:05d}__{pred_label}-{pred_adv_label}.jpg', adv_images[i])
+        # plt.imsave(f'{dir_path}/img{batch_count:03d}-{i:05d}__{pred_label}-{pred_adv_label}.jpg', adv_images[i])
+        plt.imsave(f'{dir_path}/{batch_count:03d}{i:03d}-{eps} ({label}-{pred_label}-{pred_adv_label}).jpg', adv_images[i])
 
         # img = Image.fromarray(np.asarray(np.clip(adv_image, 0, 255), dtype="uint8"), "L")
         # img.save(f'{dir_path}/img{batch_count:03d}-{i:05d}__{pred_label}-{pred_adv_label}.jpg')
@@ -85,14 +69,61 @@ def save_adv_image(
         i+=1
 
 
-def save_pred(attack_name, dataset_name, model_name, pred_acc_arr):
-    dir_path = DATA + f"/Classification/Attacks/{attack_name}/{model_name}"
+def save_adv_def_image(
+        experiment_name,
+        attack_name,
+        defense_name,
+        defense_eps,
+        dataset_name,
+        model_name,
+        eps,
+        batch_count,
+        labels,
+        pred_labels,
+        pred_adv_labels,
+        adv_images):
+
+    i = 0
+
+    for adv_image in adv_images:
+
+        label = labels[i]
+        pred_label = np.argmax(pred_labels[i])
+        pred_adv_label = np.argmax(pred_adv_labels[i])
+
+        # dir_path = DATA + f"/Classification/Attacks/{attack_name}_{defense_name}/{model_name}/{eps}/{dataset_name}/{label}"
+        dir_path = DATA + f"/Classification/Experiments/{experiment_name}/{dataset_name}/{model_name}/ATTACK-{attack_name}/DEFENSE-{defense_name}"
+        if not os.path.exists(dir_path): os.makedirs(dir_path)
+
+        plt.imsave(f'{dir_path}/{batch_count:03d}{i:03d}-{eps}--{defense_eps} ({label}-{pred_label}-{pred_adv_label}).jpg', adv_images[i])
+
+        # img = Image.fromarray(np.asarray(np.clip(adv_image, 0, 255), dtype="uint8"), "L")
+        # img.save(f'{dir_path}/img{batch_count:03d}-{i:05d}__{pred_label}-{pred_adv_label}.jpg')
+
+        # out_img = Image.fromarray(adv_image, "RGB")
+        # out_img.save("ycc.tif")
+
+        i+=1
+
+
+def save_pred( experiment_name, attack_name, dataset_name, model_name, pred_acc_arr):
+    dir_path = DATA + f"/Classification/Experiments/{experiment_name}/{dataset_name}/{model_name}/ATTACK-{attack_name}"
 
     if not os.path.exists(dir_path): os.makedirs(dir_path)
 
-    with open(f"{dir_path}/{dataset_name}_pred.txt", 'w') as fw:
+    with open(f"{dir_path}/attack_pred.txt", 'w') as fw:
         json.dump(pred_acc_arr, fw)
-    pass
+
+
+def save_pred_def( experiment_name, attack_name, dataset_name, defense_name, defense_eps, model_name, pred_acc_arr):
+    # dir_path = DATA + f"/Classification/Attacks/{attack_name}/{model_name}"
+    dir_path = DATA + f"/Classification/Experiments/{experiment_name}/{dataset_name}/{model_name}/ATTACK-{attack_name}"
+
+    if not os.path.exists(dir_path): os.makedirs(dir_path)
+
+    with open(f"{dir_path}/defense_{defense_name}_{defense_eps}_pred.txt", 'w') as fw:
+        json.dump(pred_acc_arr, fw)
+
 
 
 def save_history(dataset_name, model_name, history):

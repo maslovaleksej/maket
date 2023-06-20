@@ -9,6 +9,8 @@ from portal.entity.dataset.orm import Dataset
 from portal.entity.experiment.orm import Experiment
 from portal.entity.model.orm import INS
 
+import subprocess
+
 
 class EForm(forms.Form):
     type = forms.IntegerField()
@@ -53,7 +55,19 @@ def experiment_detail(request, id):
     }
     return render(request, 'portal/pages/experiment/detail.html', context)
 
+def experiment_status(request, id):
+    form = Experiment.objects.filter(pk=id).first()
+    context = {
+        "form": form
+    }
+    return render(request, 'portal/pages/experiment/status.html', context)
 
+def experiment_result(request, id):
+    form = Experiment.objects.filter(pk=id).first()
+    context = {
+        "form": form
+    }
+    return render(request, 'portal/pages/experiment/result.html', context)
 
 def experiment_add_resume(request):
     form = EForm(request.POST)
@@ -106,9 +120,11 @@ def experiment_add_resume(request):
 
 
 
-# return render(request, 'portal/pages/model/add.html')
-
-
 def experiment_del(request, id):
     INS.objects.filter(id=id).delete()
+    return redirect(experiments_list)
+
+
+def experiment_run(request, id):
+    result = subprocess.run(['python3', '-V'], encoding='utf-8')
     return redirect(experiments_list)

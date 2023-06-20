@@ -1,0 +1,21 @@
+{% extends 'portal/mainLayaut.html' %}
+
+
+
+
+{% block content %}
+    <div class="d-flex justify-content-end">
+        <a class="btn btn-primary text-decoration-none ms-2" href="{% url 'experiment_detail' form.pk %}"
+           role="button">Конфигурация</a>
+        <a class="btn btn-secondary text-decoration-none ms-2" href="{% url 'experiment_status' form.pk %}"
+           role="button">Статус выполнения</a>
+        <a class="btn btn-success text-decoration-none ms-2" href="{% url 'experiment_result' form.pk %}"
+           role="button">Результаты</a>
+    </div>
+
+    <div class="main">
+        {% block experiment %}
+        {% endblock experiment %}
+    </div>
+
+{% endblock content %}
