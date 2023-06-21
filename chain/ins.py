@@ -138,10 +138,10 @@ class Model_obj:
             self,
             experiment_name,
             attack_name,
+            epsilons,
             batch_size,
             batch_nums,
             device,
-            epsilon,
             save_images
     ):
         with tf.device(device):
@@ -168,9 +168,9 @@ class Model_obj:
                 loss_object=tf.losses.SparseCategoricalCrossentropy(from_logits=True)
             )
 
-            self.eps = epsilon
 
-            for eps in self.eps:
+
+            for eps in epsilons:
                 # print("eps=", eps)
                 match attack_name:
                     case "PGD":
@@ -232,7 +232,7 @@ class Model_obj:
                 pred_acc_arr["y"].append(pred_acc)
                 pred_acc_arr["y_adv"].append(pred_adv_acc)
 
-            print("pred_acc_arr", pred_acc_arr)
+            # print("pred_acc_arr", pred_acc_arr)
 
             disk_util.save_pred(
                 experiment_name=experiment_name,
@@ -246,17 +246,11 @@ class Model_obj:
 
 
 
-
-
-
-
-
     def attack_defense(
             self,
             experiment_name,
             attack_name,
             epsilon,
-
 
             defense_name,
             defense_eps,
@@ -286,9 +280,9 @@ class Model_obj:
                 case "JC":
                     defense = JpegCompression(clip_values=(0, 255), quality=defense_eps)  # 10 optimum
                 case "SS":
-                    defense = SpatialSmoothing(window_size=defense_eps)  # 6 optimum
-                case "SS":
-                    defense = FeatureSqueezing(bit_depth=defense_eps)  # 8 optimum
+                    defense = SpatialSmoothing(clip_values=(0,255), window_size=defense_eps)  # 6 optimum
+                case "FS":
+                    defense = FeatureSqueezing(clip_values=(0,255), bit_depth=defense_eps)  # 8 optimum
 
             classifier = TensorFlowV2Classifier(
                 model=self.model,
@@ -364,7 +358,7 @@ class Model_obj:
                     pred_acc_arr["y"].append(pred_acc)
                     pred_acc_arr["y_adv"].append(pred_adv_acc)
 
-                print("pred_acc_arr", pred_acc_arr)
+                # print("pred_acc_arr", pred_acc_arr)
 
                 disk_util.save_pred_def(
                     experiment_name=experiment_name,

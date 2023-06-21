@@ -18,8 +18,8 @@ for dataset_name in dataset_names:
             print(model_obj.file_name, "train")
             model_obj.train_save(
                 dataset_name=dataset_name,
-                batch_size=16,
-                epoch=30,
+                batch_size=4,
+                epoch=20,
                 split=0.2,
                 device="GPU:0",
             )

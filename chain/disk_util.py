@@ -58,7 +58,7 @@ def save_adv_image(
         if not os.path.exists(dir_path): os.makedirs(dir_path)
 
         # plt.imsave(f'{dir_path}/img{batch_count:03d}-{i:05d}__{pred_label}-{pred_adv_label}.jpg', adv_images[i])
-        plt.imsave(f'{dir_path}/{batch_count:03d}{i:03d}-{eps} ({label}-{pred_label}-{pred_adv_label}).jpg', adv_images[i])
+        plt.imsave(f'{dir_path}/{batch_count:03d}{i:03d} Attack-{eps} ({label}-{pred_label}-{pred_adv_label}).jpg', adv_images[i])
 
         # img = Image.fromarray(np.asarray(np.clip(adv_image, 0, 255), dtype="uint8"), "L")
         # img.save(f'{dir_path}/img{batch_count:03d}-{i:05d}__{pred_label}-{pred_adv_label}.jpg')
@@ -92,10 +92,11 @@ def save_adv_def_image(
         pred_adv_label = np.argmax(pred_adv_labels[i])
 
         # dir_path = DATA + f"/Classification/Attacks/{attack_name}_{defense_name}/{model_name}/{eps}/{dataset_name}/{label}"
-        dir_path = DATA + f"/Classification/Experiments/{experiment_name}/{dataset_name}/{model_name}/ATTACK-{attack_name}/DEFENSE-{defense_name}"
+        # dir_path = DATA + f"/Classification/Experiments/{experiment_name}/{dataset_name}/{model_name}/ATTACK-{attack_name}/DEFENSE-{defense_name}"
+        dir_path = DATA + f"/Classification/Experiments/{experiment_name}/{dataset_name}/{model_name}/ATTACK-{attack_name}/attacked_images"
         if not os.path.exists(dir_path): os.makedirs(dir_path)
 
-        plt.imsave(f'{dir_path}/{batch_count:03d}{i:03d}-{eps}--{defense_eps} ({label}-{pred_label}-{pred_adv_label}).jpg', adv_images[i])
+        plt.imsave(f'{dir_path}/{batch_count:03d}{i:03d} Attack-{eps} Defense-{defense_eps} ({label}-{pred_label}-{pred_adv_label}).jpg', adv_images[i])
 
         # img = Image.fromarray(np.asarray(np.clip(adv_image, 0, 255), dtype="uint8"), "L")
         # img.save(f'{dir_path}/img{batch_count:03d}-{i:05d}__{pred_label}-{pred_adv_label}.jpg')

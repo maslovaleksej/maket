@@ -1,75 +1,85 @@
 from chain.models import models
 
 dataset_names = ["Airplane", "Marvell", "Norb", "RsiCB256", "Flowers"]
-experiment_name = "test_robustness"
-save_images = True
+dataset_names = ["Airplane", "Marvell", "Norb"]
 
-# defenses = ["SS", "JC", "FS", ]
-#
-# # train models for datasets
+experiment_name = "test_robustness"
+save_images = False
+batch_size = 20 # 100 уже не проходит на GPU
+batch_nums = 1
+device = "GPU:0"
+
+attacks = [
+    {"name": "PGD", "eps": [0.001, 0.002, 0.01, 0.02, 0.1, 0.2]},
+    {"name": "FGM", "eps": [0.001, 0.002, 0.01, 0.02, 0.1, 0.2]},
+    {"name": "BIM", "eps": [0.001, 0.002, 0.01, 0.02, 0.1, 0.2]},
+]
+
+defenses = [
+    {"name": "JC", "eps": [8, 10, 12]},
+    {"name": "SS", "eps": [4, 6, 8]},
+    {"name": "FS", "eps": [7, 8, 10]},
+]
+
 for dataset_name in dataset_names:
+    print("===================================")
+    print("dataset_name", dataset_name)
+    print("===================================")
+
     for model_obj in models:
+        print("-----------------------------------")
+        print("model_name", model_obj.model_name)
+        print("-----------------------------------")
 
         model_obj.load(
             target_dataset_name=dataset_name,
             device="GPU:0",
         )
 
-        model_obj.attack(
-            experiment_name = experiment_name,
-            attack_name="FGM",
-            batch_size=20,
-            batch_nums=1,
-            device="GPU:0",
-            epsilon=[0, 0.01, 0.1, 0.15, 0.2, 0.6],
-            save_images=save_images
-        )
-        model_obj.attack_defense(
-            experiment_name=experiment_name,
-            attack_name="FGM",
-            epsilon=[0, 0.01, 0.1, 0.15, 0.2, 0.6],
-            defense_name="SS",
-            defense_eps=6,
-            batch_size=20,
-            batch_nums=1,
-            device="GPU:0",
-            save_images=save_images
-        )
-        model_obj.attack_defense(
-            experiment_name=experiment_name,
-            attack_name="FGM",
-            epsilon=[0, 0.01, 0.1, 0.15, 0.2, 0.6],
-            defense_name="SS",
-            defense_eps=9,
-            batch_size=20,
-            batch_nums=1,
-            device="GPU:0",
-            save_images=save_images
-        )
+        #  =============== attack ==================
 
+        for attack in attacks:
+            print("--------------------------------------")
+            print("attack", attack["name"])
+            print("epslinons", attack["eps"])
+            print("--------------------------------------")
 
+            model_obj.attack(
+                experiment_name=experiment_name,
+                attack_name=attack["name"],
+                epsilons=attack["eps"],
+                batch_size=batch_size,
+                batch_nums=batch_nums,
+                device=device,
+                save_images=save_images
+            )
 
-        model_obj.attack(
-            experiment_name = experiment_name,
-            attack_name="PGD",
-            batch_size=20,
-            batch_nums=1,
-            device="GPU:0",
-            epsilon=[0.01, 0.1, 0.15, 0.2, 0.6],
-            save_images=save_images
-        )
+            # for defense in defenses:
+            #     print("")
+            #     print("attack", attack["name"])
+            #     print("attack epsilons", attack["eps"])
+            #     print("defense", defense["name"])
+            #     print("")
+            #
+            #     for defense_epsilon in defense["eps"]:
+            #         print("")
+            #         print("attack", attack["name"])
+            #         print("attack epsilons", attack["eps"])
+            #         print("defense", defense["name"])
+            #         print("defense epsilon", defense_epsilon)
 
-        model_obj.attack(
-            experiment_name=experiment_name,
-            attack_name="BIM",
-            batch_size=20,
-            batch_nums=1,
-            device="GPU:0",
-            epsilon=[0.01, 0.1, 0.15, 0.2, 0.6],
-            save_images=save_images
-        )
+            # -------------- defense -------------------
 
+            # model_obj.attack_defense(
+            #     experiment_name=experiment_name,
+            #     attack_name=attack["name"],
+            #     eps=attack_epsilon,
+            #     defense_name=defense["name"],
+            #     defense_eps=defense_epsilon,
+            #     batch_size=batch_size,
+            #     batch_nums=batch_nums,
+            #     device=device,
+            #     save_images=save_images
+            # )
 
-
-
-print ("done")
+print("done")
