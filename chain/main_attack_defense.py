@@ -1,3 +1,6 @@
+import os
+
+from chain.const import DATA
 from chain.models import models
 
 dataset_names = ["Airplane", "Marvell", "Norb", "RsiCB256", "Flowers"]
@@ -5,7 +8,7 @@ dataset_names = ["Airplane", "Marvell", "Norb"]
 
 experiment_name = "test_robustness"
 save_images = False
-batch_size = 20 # 100 уже не проходит на GPU
+batch_size = 4 # 10 уже не проходит на GPU 12gb for VIT
 batch_nums = 1
 device = "GPU:0"
 
@@ -44,15 +47,18 @@ for dataset_name in dataset_names:
             print("epslinons", attack["eps"])
             print("--------------------------------------")
 
-            model_obj.attack(
-                experiment_name=experiment_name,
-                attack_name=attack["name"],
-                epsilons=attack["eps"],
-                batch_size=batch_size,
-                batch_nums=batch_nums,
-                device=device,
-                save_images=save_images
-            )
+            dir_path = DATA + f"/Classification/Experiments/{experiment_name}/{dataset_name}/{model_obj.model_name}/ATTACK-{attack['name']}"
+            if not os.path.exists(dir_path):
+
+                model_obj.attack(
+                    experiment_name=experiment_name,
+                    attack_name=attack["name"],
+                    epsilons=attack["eps"],
+                    batch_size=batch_size,
+                    batch_nums=batch_nums,
+                    device=device,
+                    save_images=save_images
+                )
 
             # for defense in defenses:
             #     print("")
